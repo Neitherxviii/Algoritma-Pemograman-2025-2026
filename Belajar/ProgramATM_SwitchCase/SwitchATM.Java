@@ -2,39 +2,32 @@ import java.util.Scanner;
 
 public class ATM {
     public static void main(String[] args) {
-        Scanner input = new Scanner(System.in);
+        Scanner sc = new Scanner(System.in);
 
         String nama;
         String konfirmasi;
 
         while (true) {
             System.out.print("Masukkan nama anda: ");
-            nama = input.nextLine();
+            nama = sc.nextLine();
 
             konfirmasi = "";
             while (!konfirmasi.equals("true") && !konfirmasi.equals("false")) {
                 System.out.print("Apakah nama sudah benar? (true/false): ");
-                konfirmasi = input.nextLine().toLowerCase();
+                konfirmasi = sc.nextLine().toLowerCase();
             }
 
-            if (konfirmasi.equals("true")) {
-                break;
-            }
-
-            System.out.println("Silakan masukkan nama kembali.");
+            if (konfirmasi.equals("true")) break;
+            System.out.println("Silakan masukkan nama kembali.\n");
         }
 
-        String nim = "";
-        boolean nimBenar = false;
-
-        while (!nimBenar) {
+        String nim;
+        while (true) {
             System.out.print("Masukkan NIM: ");
-            nim = input.nextLine();
-            if (!nim.equals("")) {
-                nimBenar = true;
-            } else {
-                System.out.println("NIM harus angka!");
-            }
+            nim = sc.nextLine();
+
+            if (nim.matches("[0-9]+")) break;
+            System.out.println("NIM harus angka!\n");
         }
 
         long saldo = Long.parseLong(nim);
@@ -51,79 +44,66 @@ public class ATM {
             System.out.println("5. Keluar");
             System.out.print("Pilih menu (1-5): ");
 
-            String pilih = input.nextLine();
+            String pilih = sc.nextLine();
             System.out.println();
 
-            if (pilih.equals("1")) {
-                System.out.println("Saldo: Rp " + saldo + "\n");
-            }
+            switch (pilih) {
+                case "1":
+                    System.out.println("Saldo: Rp " + saldo + "\n");
+                    break;
 
-            else if (pilih.equals("2")) {
-                long nominal = -1;
-                while (nominal <= 0) {
+                case "2":
                     System.out.print("Masukkan jumlah tarik tunai: ");
-                    String tarik = input.nextLine();
-                    if (tarik.matches("\\d+")) {
-                        nominal = Long.parseLong(tarik);
+                    String tarik = sc.nextLine();
+                    if (tarik.matches("[0-9]+")) {
+                        long t = Long.parseLong(tarik);
+                        if (t <= saldo) {
+                            saldo -= t;
+                            System.out.println("Saldo baru: Rp " + saldo + "\n");
+                        } else {
+                            System.out.println("Saldo tidak cukup!\n");
+                        }
                     } else {
-                        System.out.println("Input harus angka dan lebih dari 0!");
+                        System.out.println("Input tidak valid!\n");
                     }
-                }
+                    break;
 
-                if (nominal > saldo) {
-                    System.out.println("Saldo tidak cukup!\n");
-                } else {
-                    saldo -= nominal;
-                    System.out.println("Saldo baru: Rp " + saldo + "\n");
-                }
-            }
-
-            else if (pilih.equals("3")) {
-                long nominal = -1;
-                while (nominal <= 0) {
-                    System.out.print("Masukkan jumlah setor tunai: ");
-                    String setor = input.nextLine();
-                    if (setor.matches("\\d+")) {
-                        nominal = Long.parseLong(setor);
+                case "3":
+                    System.out.print("Masukkan jumlah setor: ");
+                    String setor = sc.nextLine();
+                    if (setor.matches("[0-9]+")) {
+                        saldo += Long.parseLong(setor);
+                        System.out.println("Saldo baru: Rp " + saldo + "\n");
                     } else {
-                        System.out.println("Input harus angka dan lebih dari 0!");
+                        System.out.println("Input tidak valid!\n");
                     }
-                }
+                    break;
 
-                saldo += nominal;
-                System.out.println("Saldo baru: Rp " + saldo + "\n");
-            }
-
-            else if (pilih.equals("4")) {
-                long nominal = -1;
-                while (nominal <= 0) {
+                case "4":
                     System.out.print("Masukkan nominal transfer: ");
-                    String transfer = input.nextLine();
-                    if (transfer.matches("\\d+")) {
-                        nominal = Long.parseLong(transfer);
+                    String transfer = sc.nextLine();
+                    if (transfer.matches("[0-9]+")) {
+                        long tr = Long.parseLong(transfer);
+                        if (tr <= saldo) {
+                            System.out.print("Masukkan nomor rekening tujuan: ");
+                            String rek = sc.nextLine();
+                            saldo -= tr;
+                            System.out.println("Transfer berhasil ke " + rek);
+                            System.out.println("Saldo baru: Rp " + saldo + "\n");
+                        } else {
+                            System.out.println("Saldo tidak cukup!\n");
+                        }
                     } else {
-                        System.out.println("Input harus angka dan lebih dari 0!");
+                        System.out.println("Input tidak valid!\n");
                     }
-                }
+                    break;
 
-                if (nominal > saldo) {
-                    System.out.println("Saldo tidak cukup!\n");
-                } else {
-                    System.out.print("Masukkan nomor rekening tujuan: ");
-                    String rek = input.nextLine();
-                    saldo -= nominal;
-                    System.out.println("Transfer berhasil ke " + rek);
-                    System.out.println("Saldo baru: Rp " + saldo + "\n");
-                }
-            }
+                case "5":
+                    System.out.println("Terima kasih!");
+                    return;
 
-            else if (pilih.equals("5")) {
-                System.out.println("Terima kasih!");
-                return;
-            }
-
-            else {
-                System.out.println("Pilihan tidak valid!\n");
+                default:
+                    System.out.println("Pilihan tidak valid!\n");
             }
         }
     }

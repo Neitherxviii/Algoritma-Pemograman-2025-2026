@@ -8,25 +8,22 @@ while (true) {
         $konfirmasi = strtolower(readline("Apakah nama sudah benar? (true/false): "));
     }
 
-    if ($konfirmasi == "true") {
-        break;
-    }
-
+    if ($konfirmasi == "true") break;
     echo "Silakan masukkan nama kembali.\n";
 }
 
 $nimBenar = false;
-while ($nimBenar == false) {
+while (!$nimBenar) {
     $nim = readline("Masukkan NIM: ");
 
-    if ($nim) {
+    if ($nim !== "" && ctype_digit($nim)) {
         $nimBenar = true;
     } else {
         echo "NIM harus angka!\n";
     }
 }
 
-$saldo = (int)$nim;
+$saldo = intval($nim);
 
 echo "\nNama: $nama\n";
 echo "Saldo Awal: Rp " . number_format($saldo, 0, ',', '.') . "\n\n";
@@ -43,21 +40,15 @@ while (true) {
     echo "\n";
 
     switch ($pilihan) {
-
         case "1":
             echo "Saldo: Rp " . number_format($saldo, 0, ',', '.') . "\n\n";
             break;
 
         case "2":
-            do {
-                $tarik = readline("Masukkan jumlah tarik tunai: ");
-                if (!is_numeric($tarik) || $tarik <= 0) {
-                    echo "Input harus angka dan lebih dari 0!\n";
-                    $tarik = null;
-                }
-            } while ($tarik === null);
-
-            if ($tarik > $saldo) {
+            $tarik = readline("Masukkan jumlah tarik tunai: ");
+            if (!ctype_digit($tarik) || $tarik <= 0) {
+                echo "Input tidak valid!\n\n";
+            } elseif ($tarik > $saldo) {
                 echo "Saldo tidak cukup!\n\n";
             } else {
                 $saldo -= $tarik;
@@ -66,28 +57,20 @@ while (true) {
             break;
 
         case "3":
-            do {
-                $setor = readline("Masukkan jumlah setor tunai: ");
-                if (!is_numeric($setor) || $setor <= 0) {
-                    echo "Input harus angka dan lebih dari 0!\n";
-                    $setor = null;
-                }
-            } while ($setor === null);
-
-            $saldo += $setor;
-            echo "Saldo baru: Rp " . number_format($saldo, 0, ',', '.') . "\n\n";
+            $setor = readline("Masukkan jumlah setor tunai: ");
+            if (ctype_digit($setor) && $setor > 0) {
+                $saldo += $setor;
+                echo "Saldo baru: Rp " . number_format($saldo, 0, ',', '.') . "\n\n";
+            } else {
+                echo "Input tidak valid!\n\n";
+            }
             break;
 
         case "4":
-            do {
-                $transfer = readline("Masukkan nominal transfer: ");
-                if (!is_numeric($transfer) || $transfer <= 0) {
-                    echo "Input harus angka dan lebih dari 0!\n";
-                    $transfer = null;
-                }
-            } while ($transfer === null);
-
-            if ($transfer > $saldo) {
+            $transfer = readline("Masukkan nominal transfer: ");
+            if (!ctype_digit($transfer) || $transfer <= 0) {
+                echo "Input tidak valid!\n\n";
+            } elseif ($transfer > $saldo) {
                 echo "Saldo tidak cukup!\n\n";
             } else {
                 $rek = readline("Masukkan nomor rekening tujuan: ");
@@ -99,7 +82,7 @@ while (true) {
 
         case "5":
             echo "Terima kasih!\n";
-            exit();
+            exit;
 
         default:
             echo "Pilihan tidak valid!\n\n";
